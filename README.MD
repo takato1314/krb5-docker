@@ -1,5 +1,5 @@
 Krb5 Server
------------
+===========
 
 This is a gcavalcante8808/krb5-server image with MIT Kerberos v5 installed.
 
@@ -8,7 +8,7 @@ Simple Usage
 
 If you just want to create a Krb5 Server from scratch, just clone the repository and use docker-compose to bring it up quickly:
 
-```
+``` shell
     cd tmp
     git clone https://github.com/gcavalcante8808/docker-krb5-server.git
     cd docker-krb5-server
@@ -27,19 +27,19 @@ You need to supply the following environment variables:
 
 With all this information, you can now run the container:
 
-```
+``` shell
     docker run -d --name krb5-server -e KRB5_REALM=EXAMPLE.COM -e KRB5_KDC=localhost -e KRB5_PASS=mypass -p 88:88 -p 464:464 -p 749:749 gcavalcante8808/krb5-server
 ```
 
 If you haven't provided the password, find him at the logs:
 
-```
+``` shell
     docker logs krb5-server
 ```
 
 To acquire a ticket from your new domain, create a krb5.conf on "/etc" with the following config:
 
-```
+``` shell
 [libdefaults]
  dns_lookup_realm = false
  ticket_lifetime = 24h
@@ -56,9 +56,9 @@ To acquire a ticket from your new domain, create a krb5.conf on "/etc" with the 
 
 ```
 
-By Default just the user admin/admin@REALM is created; to test the setup, try to aquire the ticket with the following commands:
+By Default just the user `admin/admin@REALM` is created; to test the setup, try to aquire the ticket with the following commands:
 
-```
+``` shell
     kinit admin/admin@YOURREALM.FQDN # Will prompt for the password provided or the generated.
     klist
 ```
@@ -71,15 +71,13 @@ Note About Low Entropy and Kerberos Database Creation
 
 If your container won't start properly and show a message like "Loading random data" for couple minutes indicates that the system don't have enough entropy avail to provide a secure cryptographyc loop to the program.
 
-In this case you can use rngd (will be necessary to restart the container after this):
+In this case you can use `rngd` (will be necessary to restart the container after this):
 
-```
+``` shell
     /sbin/rngd
 ```
 
-You can use havaged as well, as we can see in the digitalOcean tutorial:
-
-https://www.digitalocean.com/community/tutorials/how-to-setup-additional-entropy-for-cloud-servers-using-haveged
+You can use `havaged` as well, as we can see in the [DigitalOcean](https://www.digitalocean.com/community/tutorials/how-to-setup-additional-entropy-for-cloud-servers-using-haveged) tutorial:
 
 After this, you just need to restart your container and it is g-n-go.
 
